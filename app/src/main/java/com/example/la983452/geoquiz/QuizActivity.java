@@ -2,7 +2,6 @@ package com.example.la983452.geoquiz;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +13,8 @@ import android.widget.Toast;
 import com.bignerdranch.android.geoquiz.CheatActivity;
 import com.bignerdranch.android.geoquiz.Question;
 
+import static android.view.View.GONE;
+
 public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
@@ -24,8 +25,9 @@ public class QuizActivity extends AppCompatActivity {
     private Button mFalseButton;
     private Button mNextButton;
     private Button mCheatButton;
-    private TextView mAPITextView;
     private TextView mQuestionTextView;
+    private TextView mLimitedNumTextView;
+
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_australia, true),
@@ -38,6 +40,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private int mCurrentIndex = 0;
     private boolean mIsCheater;
+    private int mLimitedNum = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,11 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
+        mLimitedNumTextView = (TextView) findViewById(R.id.Limited_text_view);
+
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
+
+
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
@@ -92,6 +100,8 @@ public class QuizActivity extends AppCompatActivity {
         updateQuestion();
 
 
+
+
     }
 
     @Override
@@ -105,8 +115,18 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+            mLimitedNum--;
+            mLimitedNumTextView.setText(mLimitedNum + " Attempts left");
+            if (mLimitedNum == 0)
+            {
+                mCheatButton.setVisibility(GONE);
+
+            }
+
         }
     }
+
+
 
     @Override
     protected void onStart() {
